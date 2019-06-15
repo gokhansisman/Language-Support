@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans|Raleway|Srisakdi&amp;subset=latin-ext" rel="stylesheet">
+    <style>
+        body {
+
+            /*
+            font-family: 'Open Sans', sans-serif;
+            font-family: 'Srisakdi', cursive;
+            font-family: 'Raleway', sans-serif;
+            */
+            background: #fff8f8;
+        }
+
+        .content {
+            margin: auto;
+            margin-top: 100px;
+            width: 700px;
+            box-shadow: 0px 0px 57px #b4a6a6;
+        }
+
+        .content table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .content table td { 
+            border-collapse: collapse;
+            padding: 10px;
+            text-align:center;
+            font-family: 'Raleway', sans-serif;
+            word-break: break-all;
+        }
+
+        .content table tr:nth-child(2n) {
+            background-color: #ebe9e9;
+        }
+
+        .content table th {
+            color: #333;
+            padding: 10px;
+            width: 30px;
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        .sentences {
+            max-height: 50px;
+            overflow: hidden auto;
+            display: block;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+    
+    
+    <div class="content">
+        <table>
+
+                <% fieldNames.forEach((v, i) => { %>
+                    <th><%= v[0].toUpperCase() + v.slice(1).toLowerCase() %></th>
+                <% }) %>
+
+                <% for (i = 0; i < users.length; i++) { 
+                    var user = users[i]%>
+                    <tr>
+                    <% fieldNames.forEach((v, i) => {
+                        %>
+
+                        <td <%= "class="+v+"" %>><%= user[v] %></td>
+
+                    <%}) %>
+                    </tr>
+                <%}%>
+        </table>
+    </div>
+</body>
+</html>
