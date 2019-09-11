@@ -9,6 +9,9 @@
     "react": "^16.8.4",
     "react-bootstrap-table": "^4.3.1",
     "react-dom": "^16.8.4",
+    "react-native-elements": "^1.0.0-beta8",
+    "react-native-ratings": "^6.5.0",
+    "react-native-vector-icons": "^6.6.0",
     "react-popupbox": "^2.0.8",
     "react-scripts": "^3.1.1",
     "reactstrap": "^7.1.0"
