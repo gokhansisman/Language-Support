@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
+import { BootstrapTable, TableHeaderColumn,InsertButton } from 'react-bootstrap-table';
+import Header from './components/header'
 import { Row, Col } from 'reactstrap';
+
 import logo from './logo.svg';
 import {
   PopupboxManager,
@@ -23,7 +25,7 @@ class App extends Component {
       polish: "",
       spanish: "",
       sentences: ""
-      
+
       // redirect: false
     };
     this.openPopupbox = this.openPopupbox.bind(this);
@@ -34,24 +36,24 @@ class App extends Component {
     this.polish = React.createRef();
     this.spanish = React.createRef();
     this.sentences = React.createRef();
+    
 
 
-    
-    
-  }; 
+
+  };
   update() {
     const content = (
       <div>
-        <input className="quotes" type="text" ref={this.english}  onChange={this.openPopupbox} placeholder="English"></input>
+        <input className="quotes" type="text" ref={this.english} onChange={this.openPopupbox} placeholder="English"></input>
         <input className="quotes" type="text" ref={this.turkish} onChange={this.openPopupbox} placeholder="Turkish"></input>
-        <input className="quotes" type="text" ref={this.polish}  onChange={this.openPopupbox} placeholder="Polish"></input>
-        <input className="quotes" type="text" ref={this.spanish}  onChange={this.openPopupbox} placeholder="Spanish"></input>
-        <input className="quotes" type="text" ref={this.sentences}  onChange={this.openPopupbox} placeholder="Sentences"></input>
+        <input className="quotes" type="text" ref={this.polish} onChange={this.openPopupbox} placeholder="Polish"></input>
+        <input className="quotes" type="text" ref={this.spanish} onChange={this.openPopupbox} placeholder="Spanish"></input>
+        {/* <input className="quotes" type="text" ref={this.sentences}  onChange={this.openPopupbox} placeholder="Sentences"></input> */}
         <button className="quotes" onClick={this.postData} type="submit">Save</button>
       </div>
     )
     PopupboxManager.open({ content })
-     }
+  }
   openPopupbox(event) {
     this.setState({
       english: this.english.current.value,
@@ -61,7 +63,12 @@ class App extends Component {
       sentences: this.sentences.current.value
 
     });
- 
+
+  }
+  createCustomInsertButton = (onClick) => {
+    return (
+      <button style={{ color: 'red' }} onClick={this.update}>Add rows</button>
+    );
   }
   componentDidMount() {
     this.fetchData();
@@ -108,7 +115,6 @@ class App extends Component {
   }
 
 
-
   render() {
     const popupboxConfig = {
       titleBar: {
@@ -118,22 +124,30 @@ class App extends Component {
       fadeIn: true,
       fadeInSpeed: 500
     }
+   
+    const options = {
+      insertBtn: this.createCustomInsertButton
+    };
 
-    return (
-      <div>
-        <button onClick={this.update}>Click Me</button>
+      return (
+
+      <div style={{ width: 'auto' }}>
+        <Header />
+        <button onClick={this.update}>Add Word</button>
         <PopupboxContainer{...popupboxConfig}></PopupboxContainer>
-        <BootstrapTable search exportCSV data={this.state.data} scrollTop={'Bottom'}
+        <BootstrapTable search insertRow exportCSV data={this.state.data} scrollTop={'Bottom'}
+          options={options}
           tableStyle={{ border: '#0000FF 2.5px solid' }}
           containerStyle={{ border: '#FFBB73 2.5px solid' }}
           headerStyle={{ border: 'red 1px solid' }}
           bodyStyle={{ border: 'green 1px solid' }}
         >
-          <TableHeaderColumn width='200' dataField='english' isKey>ENGLISH</TableHeaderColumn>
-          <TableHeaderColumn width='200' dataField='turkish'>TURKISH</TableHeaderColumn>
-          <TableHeaderColumn width='200' dataField='polish'>POLISH </TableHeaderColumn>
-          <TableHeaderColumn width='200' dataField='spanish'>SPANISH </TableHeaderColumn>
-          <TableHeaderColumn width='200' dataField='sentences'>SENTENCES</TableHeaderColumn>
+
+          <TableHeaderColumn width='150' dataField='english' isKey>ENGLISH</TableHeaderColumn>
+          <TableHeaderColumn width='150' dataField='turkish'>TURKISH</TableHeaderColumn>
+          <TableHeaderColumn width='150' dataField='polish'>POLISH </TableHeaderColumn>
+          <TableHeaderColumn width='150' dataField='spanish'>SPANISH </TableHeaderColumn>
+          {/* <TableHeaderColumn width='150' dataField='sentences'>SENTENCES</TableHeaderColumn> */}
         </BootstrapTable>
       </div>
     );
