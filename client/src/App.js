@@ -59,8 +59,7 @@ class App extends Component {
       english: this.english.current.value,
       turkish: this.turkish.current.value,
       polish: this.polish.current.value,
-      spanish: this.spanish.current.value,
-      sentences: this.sentences.current.value
+      spanish: this.spanish.current.value
 
     });
 
@@ -79,7 +78,7 @@ class App extends Component {
   }
 
   fetchData() {
-    fetch('http://localhost:8080/')
+    fetch('http://localhost:8080/api')
       .then(response => response.json())
       .then(json => {
         console.log(json)
@@ -98,7 +97,7 @@ class App extends Component {
     console.log(this.state.turkish)
     console.log(this.state.english)
 
-    fetch(`http://localhost:8080/ekle`, {
+    fetch(`http://localhost:8080/api/ekle`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -133,6 +132,7 @@ class App extends Component {
 
       <div style={{ width: 'auto' }}>
         <Header />
+        
         <PopupboxContainer{...popupboxConfig}></PopupboxContainer>
         <BootstrapTable search insertRow exportCSV data={this.state.data} scrollTop={'Bottom'}
           options={options}

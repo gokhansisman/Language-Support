@@ -5,7 +5,7 @@ const app = express()
 const db = require('./db/index')
 const Words = require('./model/words')
 const WordsFieldNames = require('./model/words').fieldNames
-
+const path = require('path');
 app.set('json spaces', 3)
 app.set('view engine', 'ejs')
 
@@ -22,6 +22,7 @@ app.use(bodyParser.urlencoded({
 /**bodyParser.json(options)
  * Parses the text as JSON and exposes the resulting object on req.body.
  */
+app.use(express.static(path.join(__dirname, '../client/build')));
 app.use(bodyParser.json());
 
 
@@ -36,16 +37,19 @@ app.get('/', (req, res) => {
     })
 })
 */
-app.get('/', (req, res) => {
-    Words.find({}).sort("english").exec(function(err, words) {
-        if (err) return res.json({hata:"hatalı"})
+
+
+
+app.get('/api', (req, res) => {
+    Words.find({}).sort("english").exec(function (err, words) {
+        if (err) return res.json({ hata: "hatalı" })
         const fieldNames = Object.keys(WordsFieldNames)
-        res.json(words);    
+        res.json(words);
     })
 })
 
 
-app.post('/ekle', (req, res) => {
+app.post('/api/ekle', (req, res) => {
     const nwords = new Words({
         turkish: req.body.turkish,
         english: req.body.english,
@@ -56,17 +60,13 @@ app.post('/ekle', (req, res) => {
 
     nwords.save((err) => {
         if (err) {
-            return res.json({err})
+            return res.json({ err })
         }
 
-        res.json({result: "Added"})
+        res.json({ result: "Added" })
         console.log('Added')
     })
-    
-})
 
-app.post('/save', (req, res) => {
-    res.json({asd:233333})
 })
 
 app.listen(8080, () => console.log('Started on 8080'))
