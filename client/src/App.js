@@ -133,7 +133,6 @@ class App extends Component {
 
       <div style={{ width: 'auto' }}>
         <Header />
-        <button onClick={this.update}>Add Word</button>
         <PopupboxContainer{...popupboxConfig}></PopupboxContainer>
         <BootstrapTable search insertRow exportCSV data={this.state.data} scrollTop={'Bottom'}
           options={options}
