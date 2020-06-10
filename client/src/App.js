@@ -78,7 +78,7 @@ class App extends Component {
   }
 
   fetchData() {
-    fetch('http://localhost:8080/api')
+    fetch('https://secure-hamlet-80997.herokuapp.com/api')
       .then(response => response.json())
       .then(json => {
         console.log(json)
@@ -97,7 +97,7 @@ class App extends Component {
     console.log(this.state.turkish)
     console.log(this.state.english)
 
-    fetch(`http://localhost:8080/api/ekle`, {
+    fetch(`https://secure-hamlet-80997.herokuapp.com/api/ekle`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
