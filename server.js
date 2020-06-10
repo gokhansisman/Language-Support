@@ -22,7 +22,7 @@ app.use(bodyParser.urlencoded({
 /**bodyParser.json(options)
  * Parses the text as JSON and exposes the resulting object on req.body.
  */
-app.use(express.static(path.join(__dirname, '../client/build')));
+app.use(express.static(path.join(__dirname, './client/build')));
 app.use(bodyParser.json());
 
 
