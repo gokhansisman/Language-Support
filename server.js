@@ -1,7 +1,7 @@
 const express = require('express')
 
 const app = express()
-
+require('dotenv').config()
 const db = require('./db/index')
 const Words = require('./model/words')
 const WordsFieldNames = require('./model/words').fieldNames
