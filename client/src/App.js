@@ -78,7 +78,7 @@ class App extends Component {
   }
 
   fetchData() {
-    fetch('https://language-support.herokuapp/api')
+    fetch('https://language-support.herokuapp.com/api')
       .then(response => response.json())
       .then(json => {
         console.log(json)
@@ -97,7 +97,7 @@ class App extends Component {
     console.log(this.state.turkish)
     console.log(this.state.english)
 
-    fetch(`https://language-support.herokuapp/api/ekle`, {
+    fetch(`https://language-support.herokuapp.com/api/ekle`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
