@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BootstrapTable, TableHeaderColumn,InsertButton } from 'react-bootstrap-table';
+import { BootstrapTable, TableHeaderColumn, InsertButton } from 'react-bootstrap-table';
 import Header from './components/header'
 import { Row, Col } from 'reactstrap';
 
@@ -24,28 +24,35 @@ class App extends Component {
       turkish: "",
       polish: "",
       spanish: "",
-      sentences: ""
-
+      sentences: "",
+      error:false
       // redirect: false
     };
     this.openPopupbox = this.openPopupbox.bind(this);
     this.update = this.update.bind(this);
     this.postData = this.postData.bind(this);
+    this.validateInput = this.validateInput.bind(this);
     this.english = React.createRef();
     this.turkish = React.createRef();
     this.polish = React.createRef();
     this.spanish = React.createRef();
     this.sentences = React.createRef();
-    
-
-
 
   };
+  validateInput(word) {
+    if (word.match(/\d/) != null) {
+      return false;
+    }
+    return true;
+  }
+
   update() {
     const content = (
       <div>
-        <input className="quotes" type="text" ref={this.english} onChange={this.openPopupbox} placeholder="English"></input>
-        <input className="quotes" type="text" ref={this.turkish} onChange={this.openPopupbox} placeholder="Turkish"></input>
+        <input
+          className="quotes" type="text" ref={this.english} onChange={this.openPopupbox} placeholder="English"></input>
+        <input className="quotes" type="text"
+          ref={this.turkish} onChange={this.openPopupbox} placeholder="Turkish"></input>
         <input className="quotes" type="text" ref={this.polish} onChange={this.openPopupbox} placeholder="Polish"></input>
         <input className="quotes" type="text" ref={this.spanish} onChange={this.openPopupbox} placeholder="Spanish"></input>
         {/* <input className="quotes" type="text" ref={this.sentences}  onChange={this.openPopupbox} placeholder="Sentences"></input> */}
@@ -55,13 +62,21 @@ class App extends Component {
     PopupboxManager.open({ content })
   }
   openPopupbox(event) {
-    this.setState({
-      english: this.english.current.value,
-      turkish: this.turkish.current.value,
-      polish: this.polish.current.value,
-      spanish: this.spanish.current.value
+    // if (this.validateInput(this.english.current.value) && this.validateInput(this.turkish.current.value) &&
+    //   this.validateInput(this.polish.current.value) && this.validateInput(this.spanish.current.value)) {
+      this.setState({
+        english: this.english.current.value,
+        turkish: this.turkish.current.value,
+        polish: this.polish.current.value,
+        spanish: this.spanish.current.value
 
-    });
+      });
+    // }
+    // else {
+    //   alert("Please do not enter numbers !")
+
+    // }
+
 
   }
   createCustomInsertButton = (onClick) => {
@@ -76,7 +91,7 @@ class App extends Component {
     });
     this.fetchData();
   }
-
+//https://language-support.herokuapp.com/api
   fetchData() {
     fetch('https://language-support.herokuapp.com/api')
       .then(response => response.json())
@@ -92,12 +107,9 @@ class App extends Component {
       .catch(error => console.log('parsing failder', error))
 
   }
-
+//https://language-support.herokuapp.com/api/ekle
   postData() {
-    console.log(this.state.turkish)
-    console.log(this.state.english)
-
-    fetch(`https://language-support.herokuapp.com/api/ekle`, {
+    fetch('https://language-support.herokuapp.com/api/ekle', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -110,8 +122,19 @@ class App extends Component {
         spanish: this.state.spanish,
         sentences: this.state.sentences
       })
+    }).then(res => res.json())
+    .catch(err=> {
+      console.log(err)
+      this.setState({
+        error:true
+      })
     })
-  }
+    if(this.state.error===true){
+     alert("Word could not add!")
+    }
+    PopupboxManager.close()
+   
+}
 
 
   render() {
@@ -123,16 +146,16 @@ class App extends Component {
       fadeIn: true,
       fadeInSpeed: 500
     }
-   
+
     const options = {
       insertBtn: this.createCustomInsertButton
     };
 
-      return (
+    return (
 
       <div style={{ width: 'auto' }}>
         <Header />
-        
+
         <PopupboxContainer{...popupboxConfig}></PopupboxContainer>
         <BootstrapTable search insertRow exportCSV data={this.state.data} scrollTop={'Bottom'}
           options={options}

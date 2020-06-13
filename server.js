@@ -48,27 +48,46 @@ app.get('/api', (req, res) => {
     })
 })
 
+function hasNumbers(t) {
+    var regex = /\d/g;
+    return regex.test(t);
+}
 
 app.post('/api/ekle', (req, res) => {
-    const nwords = new Words({
-        turkish: req.body.turkish,
-        english: req.body.english,
-        polish: req.body.polish,
-        spanish: req.body.spanish,
-        sentences: req.body.sentences
-    })
-
-    nwords.save((err) => {
-        if (err) {
-            return res.json({ err })
-        }
-
-        res.json({ result: "Added" })
-        console.log('Added')
-    })
-
+    if (req.body.turkish == '') {
+        return res.status(500).send('Turkish area must filled!')
+    }
+    else if (req.body.english == '') {
+        return res.status(500).send('English area must filled!')
+    }
+    else if (req.body.polish == '') {
+        return res.status(500).send('Polish area must filled!')
+    }
+    else if (req.body.spanish == '') {
+        return res.status(500).send('Spanish area must filled!')
+    }
+    if (!hasNumbers(req.body.turkish) == true && !hasNumbers(req.body.english) == true &&
+        !hasNumbers(req.body.polish) == true && !hasNumbers(req.body.spanish) == true) {
+        const nwords = new Words({
+            turkish: req.body.turkish,
+            english: req.body.english,
+            polish: req.body.polish,
+            spanish: req.body.spanish,
+            sentences: req.body.sentences
+        })
+        nwords.save((err) => {
+            if (err) {
+                return res.json({ err })
+            }
+            res.json({ result: "Added" })
+            console.log('Added')
+        })
+    }
+    else {
+        return res.status(500).send('Something broke!')
+    }
 })
 
-app.listen(process.env.PORT || 3000, function(){
+app.listen(process.env.PORT || 3000, function () {
     console.log("Express server listening on port %d in %s mode", this.address().port, app.settings.env);
-  });
+});
