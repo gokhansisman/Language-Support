@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { BootstrapTable, TableHeaderColumn, InsertButton } from 'react-bootstrap-table';
+import {BootstrapTable, TableHeaderColumn, InsertButton } from 'react-bootstrap-table';
 import Header from './components/header'
 import { Row, Col } from 'reactstrap';
+import { Button } from 'react-bootstrap';
 
 import logo from './logo.svg';
 import {
@@ -81,7 +82,10 @@ class App extends Component {
   }
   createCustomInsertButton = (onClick) => {
     return (
-      <button style={{ color: 'red' }} onClick={this.update}>Add rows</button>
+      <div>
+      <Button variant="outline-success" onClick={this.update}>Add Word</Button>
+      </div>
+      //<button style={{ color: 'red' }} onClick={this.update}>Add rows</button>
     );
   }
   componentDidMount() {
