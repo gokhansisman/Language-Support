@@ -51,11 +51,31 @@ class App extends Component {
     const content = (
       <div>
         <input
-          className="quotes" type="text" ref={this.english} onChange={this.openPopupbox} placeholder="English"></input>
+          className="quotes" type="text" ref={this.english} onChange={e => {
+            e.target.value = e.target.value.replace(/[^A-Za-z-ğüşöçİĞÜŞÖÇĄąĆćĘęŁłŃńÓóŚśŹźŻżÑñáÁéÉíÍóÓúÚ]/gi, "");
+            this.openPopupbox()
+          }
+          } 
+          placeholder="English"></input>
         <input className="quotes" type="text"
-          ref={this.turkish} onChange={this.openPopupbox} placeholder="Turkish"></input>
-        <input className="quotes" type="text" ref={this.polish} onChange={this.openPopupbox} placeholder="Polish"></input>
-        <input className="quotes" type="text" ref={this.spanish} onChange={this.openPopupbox} placeholder="Spanish"></input>
+          ref={this.turkish} onChange={
+            e => {
+              e.target.value = e.target.value.replace(/[^A-Za-z-ğüşöçİĞÜŞÖÇĄąĆćĘęŁłŃńÓóŚśŹźŻżÑñáÁéÉíÍóÓúÚ]/gi, "");
+              this.openPopupbox()
+            }
+          } placeholder="Turkish"></input>
+        <input className="quotes" type="text" ref={this.polish} onChange={
+          e => {
+            e.target.value = e.target.value.replace(/[^A-Za-z-ğüşöçİĞÜŞÖÇĄąĆćĘęŁłŃńÓóŚśŹźŻżÑñáÁéÉíÍóÓúÚ]/gi, "");
+            this.openPopupbox()
+          }
+        } placeholder="Polish"></input>
+        <input className="quotes" type="text" ref={this.spanish} onChange={
+          e => {
+            e.target.value = e.target.value.replace(/[^A-Za-z-ğüşöçİĞÜŞÖÇĄąĆćĘęŁłŃńÓóŚśŹźŻżÑñáÁéÉíÍóÓúÚ]/gi, "");
+            this.openPopupbox()
+          }
+        } placeholder="Spanish"></input>
         {/* <input className="quotes" type="text" ref={this.sentences}  onChange={this.openPopupbox} placeholder="Sentences"></input> */}
         <button className="quotes" onClick={this.postData} type="submit">Save</button>
       </div>
@@ -63,13 +83,12 @@ class App extends Component {
     PopupboxManager.open({ content })
   }
   openPopupbox(event) {
-    // if (this.validateInput(this.english.current.value) && this.validateInput(this.turkish.current.value) &&
-    //   this.validateInput(this.polish.current.value) && this.validateInput(this.spanish.current.value)) {
+
       this.setState({
-        english: this.english.current.value,
-        turkish: this.turkish.current.value,
-        polish: this.polish.current.value,
-        spanish: this.spanish.current.value
+        english: this.english.current.value.toLowerCase().replace(/[^A-Za-z-ğüşöçİĞÜŞÖÇę]/gi, ""),
+        turkish: this.turkish.current.value.toLowerCase(),
+        polish: this.polish.current.value.toLowerCase(),
+        spanish: this.spanish.current.value.toLowerCase()
 
       });
     // }
