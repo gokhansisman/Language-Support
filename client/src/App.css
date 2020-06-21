@@ -18,7 +18,12 @@
   font-size: calc(10px + 2vmin);
   color: white;
 }
-
+.quotes {
+	border:1px solid olivedrab;
+	border-radius:5px;
+	height: 28px;
+	width: 230px;
+}
 .App-link {
   color: #61dafb;
 }
