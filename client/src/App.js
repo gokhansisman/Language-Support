@@ -66,6 +66,8 @@ class App extends Component {
             e.target.value = e.target.value.replace(/[^A-Za-z-ğüşöçİĞÜŞÖÇĄąĆćĘęŁłŃńÓóŚśŹźŻżÑñáÁéÉíÍóÓúÚ]/gi, "");
           }}
           placeholder="Turkish"></input>
+        <Button variant="dark" size="sm" style={{ color: 'olivedrab', margin: '5px', width: '%10',marginBottom: '9px' }} onClick={this.translateWords} type="submit">Translate</Button>
+        <div>{this.data2}</div>
         {/* <input
           className="quotes" type="text" ref={this.english}
           placeholder="English">{this.state.t_english}</input>
@@ -164,7 +166,8 @@ class App extends Component {
           data2: json,
           deneme: true
         }, function () {
-          console.log(this.state.data);
+          console.log(this.state.data2);
+          
         })
       })
       .catch(error => console.log('parsing failder', error))
