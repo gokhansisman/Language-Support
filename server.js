@@ -13,6 +13,7 @@ app.set('json spaces', 3)
 app.set('view engine', 'ejs')
 
 const bodyParser = require("body-parser");
+const { words } = require('lodash')
 /** bodyParser.urlencoded(options)
  * Parses the text as URL encoded data (which is how browsers tend to send form data from regular forms set to POST)
  * and exposes the resulting object (containing the keys and values) on req.body
@@ -43,14 +44,37 @@ app.get('/', (req, res) => {
 
 
 
-app.get('/api', (req, res) => {
+/* app.get('/api', (req, res) => {
     Words.find({}).sort("english").exec(function (err, words) {
         if (err) return res.json({ hata: "hatalı" })
         const fieldNames = Object.keys(WordsFieldNames)
         res.json(words);
     })
-})
+}) */
+app.get('/api', async (req, res) => {
+    // destructure page and limit and set default values
+    const { page = 1, limit = 100 } = req.query;
+    const fieldNames = Object.keys(WordsFieldNames)
+    try {
+        // execute query with page and limit values
+        const words = await Words.find()
+            .limit(limit * 1)
+            .skip((page - 1) * limit)
+            .exec();
 
+        // get total documents in the Posts collection 
+        const count = await Words.countDocuments();
+
+        // return response with posts, total pages, and current page
+        res.json({
+            words,
+            totalPages: Math.ceil(count / limit),
+            currentPage: page
+        });
+    } catch (err) {
+        console.error(err.message);
+    }
+});
 
 let en;
 let tr;

@@ -139,7 +139,7 @@ class App extends Component {
     this.setState({
       t_turkish: this.t_turkish.current.value.toLowerCase()
     })
-    fetch('https://language-support.herokuapp.com/api/translate', {
+    fetch('http://localhost:3000/api/translate', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -158,7 +158,7 @@ class App extends Component {
     if (this.state.error === true) {
       alert("Word could not add!")
     }
-    fetch('https://language-support.herokuapp.com/api/translate')
+    fetch('http://localhost:3000/api/translate')
       .then(response => response.json())
       .then(json => {
         console.log(json)
@@ -190,12 +190,12 @@ class App extends Component {
   }
   //https://language-support.herokuapp.com/api
   fetchData() {
-    fetch('https://language-support.herokuapp.com/api')
+    fetch('http://localhost:3000/api')
       .then(response => response.json())
       .then(json => {
         console.log(json)
         this.setState({
-          data: json,
+          data: json.words,
           deneme: true
         }, function () {
           console.log(this.state.data);
@@ -206,7 +206,7 @@ class App extends Component {
   }
   //https://language-support.herokuapp.com/api/ekle
   postData() {
-    fetch('https://language-support.herokuapp.com/api/ekle', {
+    fetch('http://localhost:3000/api/ekle', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -256,6 +256,7 @@ class App extends Component {
         <PopupboxContainer{...popupboxConfig}></PopupboxContainer>
         <BootstrapTable search insertRow exportCSV data={this.state.data} scrollTop={'Bottom'}
           options={options}
+          pagination
           tableStyle={{ border: '#0000FF 2.5px solid' }}
           containerStyle={{ border: '#FFBB73 2.5px solid' }}
           headerStyle={{ border: 'red 1px solid' }}
