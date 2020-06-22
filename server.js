@@ -57,7 +57,7 @@ let tr;
 let pl;
 let es;
 app.post('/api/translate', (req, res) => {
-    tr = req.body.turkish
+    tr = req.body.t_turkish
     translate(req.body.turkish, { to: 'en' }).then(res => {
         console.log(res.text);
         console.log(res.from.language.iso);
@@ -65,14 +65,14 @@ app.post('/api/translate', (req, res) => {
     }).catch(err => {
         console.error(err);
     })
-    translate(req.body.turkish, { to: 'pl' }).then(res => {
+    translate(req.body.t_turkish, { to: 'pl' }).then(res => {
         console.log(res.text);
         console.log(res.from.language.iso);
         pl = res.text
     }).catch(err => {
         console.error(err);
     })
-    translate(req.body.turkish, { to: 'es' }).then(res => {
+    translate(req.body.t_turkish, { to: 'es' }).then(res => {
         console.log(res.text);
         console.log(res.from.language.iso);
         es = res.text
