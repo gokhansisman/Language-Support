@@ -20,6 +20,7 @@ class App extends Component {
     super(props);
     this.state = {
       data: [],
+      data2: [],
       deneme: false,
       english: "",
       turkish: "",
@@ -36,6 +37,7 @@ class App extends Component {
     this.saveWords = this.saveWords.bind(this);
     this.update = this.update.bind(this);
     this.translate = this.translate.bind(this);
+    this.translateWords = this.translateWords.bind(this);
     this.postData = this.postData.bind(this);
     this.validateInput = this.validateInput.bind(this);
     this.english = React.createRef();
@@ -59,25 +61,24 @@ class App extends Component {
   translate() {
     const content = (
       <div>
-        <span> <input className="quotes" type="text" ref={this.t_turkish} onChange={
-          e => {
-            e.target.value = e.target.value.replace(/[^A-Za-z-ğüşöçİĞÜŞÖÇĄąĆćĘęŁłŃńÓóŚśŹźŻżÑñáÁéÉíÍóÓúÚ]/gi, "");
-          }} ></input>
-          <Button variant="dark" size="sm" style={{ color: 'olivedrab', margin: '5px', width: '%10' }} onClick={this.translateWords()} type="submit">Translate
-          </Button>
-        </span>
         <input
-          className="quotes" type="text"
-          placeholder="English">{this.t_english}</input>
-        <input className="quotes" type="text" placeholder="Turkish">{this.t_turkish}</input>
-        <input className="quotes" type="text" placeholder="Polish">{this.t_polish}</input>
-        <input className="quotes" type="text" placeholder="Spanish">{this.t_spanish}</input>
-        {/* <input className="quotes" type="text" ref={this.sentences}  onChange={this.saveWords} placeholder="Sentences"></input> */}
+          className="quotes" type="text" ref={this.t_turkish} onChange={e => {
+            e.target.value = e.target.value.replace(/[^A-Za-z-ğüşöçİĞÜŞÖÇĄąĆćĘęŁłŃńÓóŚśŹźŻżÑñáÁéÉíÍóÓúÚ]/gi, "");
+          }}
+          placeholder="Turkish"></input>
+        {/* <input
+          className="quotes" type="text" ref={this.english}
+          placeholder="English">{this.state.t_english}</input>
+        <input className="quotes" type="text"
+          ref={this.turkish} placeholder="Turkish">{this.state.t_turkish}</input>
+        <input className="quotes" type="text" ref={this.polish} placeholder="Polish">{this.state.t_polish}</input>
+        <input className="quotes" type="text" ref={this.spanish} placeholder="Spanish">{this.state.t_english}</input>
+
         <div style={{
           position: "relative", textAlign: "center"
         }}>
-          <Button variant="dark" size="sm" style={{ color: 'olivedrab', margin: '5px', width: '%10' }} onClick={this.postData} type="submit">Translate</Button>
-        </div>
+          <Button variant="dark" size="sm" style={{ color: 'olivedrab', margin: '5px', width: '%10' }} onClick={this.postData} type="submit">Save</Button>
+        </div> */}
       </div >
     )
     PopupboxManager.open({ content })
@@ -134,7 +135,7 @@ class App extends Component {
 
   translateWords() {
     this.setState({
-      t_turkish: this.t_turkish.current.value.toLowerCase(),
+      t_turkish: this.t_turkish.current.value.toLowerCase()
     })
     fetch('https://language-support.herokuapp.com/api/translate', {
       method: 'POST',
@@ -160,7 +161,7 @@ class App extends Component {
       .then(json => {
         console.log(json)
         this.setState({
-          data: json,
+          data2: json,
           deneme: true
         }, function () {
           console.log(this.state.data);
