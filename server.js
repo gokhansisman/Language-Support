@@ -6,11 +6,13 @@ const db = require('./db/index')
 const Words = require('./model/words')
 const WordsFieldNames = require('./model/words').fieldNames
 const path = require('path');
+const translate = require('@vitalets/google-translate-api');
+var store = require('store')
+
 app.set('json spaces', 3)
 app.set('view engine', 'ejs')
 
 const bodyParser = require("body-parser");
-
 /** bodyParser.urlencoded(options)
  * Parses the text as URL encoded data (which is how browsers tend to send form data from regular forms set to POST)
  * and exposes the resulting object (containing the keys and values) on req.body
@@ -40,6 +42,7 @@ app.get('/', (req, res) => {
 
 
 
+
 app.get('/api', (req, res) => {
     Words.find({}).sort("english").exec(function (err, words) {
         if (err) return res.json({ hata: "hatalı" })
@@ -48,9 +51,62 @@ app.get('/api', (req, res) => {
     })
 })
 
+
+let en;
+let tr;
+let pl;
+let es;
+app.post('/api/translate', (req, res) => {
+    tr = req.body.turkish
+    translate(req.body.turkish, { to: 'en' }).then(res => {
+        console.log(res.text);
+        console.log(res.from.language.iso);
+        en = res.text
+    }).catch(err => {
+        console.error(err);
+    })
+    translate(req.body.turkish, { to: 'pl' }).then(res => {
+        console.log(res.text);
+        console.log(res.from.language.iso);
+        pl = res.text
+    }).catch(err => {
+        console.error(err);
+    })
+    translate(req.body.turkish, { to: 'es' }).then(res => {
+        console.log(res.text);
+        console.log(res.from.language.iso);
+        es = res.text
+    }).catch(err => {
+        console.error(err);
+    })
+
+    res.json({ Message: "Translated!" })
+})
+app.get('/api/translate', (req, res) => {
+    res.json({ translated_en: en, translated_pl: pl, translated_es: es })
+})
+
+/* function googleTranslate(t_word) {
+    kelime = t_word
+    console.log(kelime)
+    googleTranslate2()
+    return t_word
+}
+function googleTranslate2() {
+    console.log(kelime)
+    return kelime
+} */
+
 function hasNumbers(t) {
     var regex = /\d/g;
     return regex.test(t);
+}
+function isValid(str) {
+    new_str = str.match(/[^A-Za-z-ğüşöçİĞÜŞÖÇıIĄąĆćĘęŁłŃńÓóŚśŹźŻżÑñáÁéÉíÍóÓúÚ]/gi)
+    if (new_str === null) {
+        return true;
+    }
+    return false;
 }
 
 app.post('/api/ekle', (req, res) => {
@@ -66,8 +122,8 @@ app.post('/api/ekle', (req, res) => {
     else if (req.body.spanish == '') {
         return res.status(500).send('Spanish area must filled!')
     }
-    if (!hasNumbers(req.body.turkish) == true && !hasNumbers(req.body.english) == true &&
-        !hasNumbers(req.body.polish) == true && !hasNumbers(req.body.spanish) == true) {
+    if (isValid(req.body.turkish) == true && isValid(req.body.english) == true &&
+        isValid(req.body.polish) == true && isValid(req.body.spanish) == true) {
         const nwords = new Words({
             turkish: req.body.turkish,
             english: req.body.english,
