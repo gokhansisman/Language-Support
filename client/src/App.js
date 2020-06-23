@@ -158,10 +158,9 @@ class App extends Component {
     if (this.state.error === true) {
       alert("Word could not add!")
     }
-    fetch('http://localhost:3000/api/translate')
+    fetch('https://language-support.herokuapp.com/api/translate')
       .then(response => response.json())
       .then(json => {
-        console.log(json)
         this.setState({
           data2: json,
           deneme: true
@@ -190,7 +189,7 @@ class App extends Component {
   }
   //https://language-support.herokuapp.com/api
   fetchData() {
-    fetch('http://localhost:3000/api')
+    fetch('https://language-support.herokuapp.com/api')
       .then(response => response.json())
       .then(json => {
         console.log(json)
@@ -206,7 +205,7 @@ class App extends Component {
   }
   //https://language-support.herokuapp.com/api/ekle
   postData() {
-    fetch('http://localhost:3000/api/ekle', {
+    fetch('https://language-support.herokuapp.com/api/ekle', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
