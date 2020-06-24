@@ -53,7 +53,7 @@ app.get('/', (req, res) => {
 }) */
 app.get('/api', async (req, res) => {
     // destructure page and limit and set default values
-    const { page = 1, limit = 100 } = req.query;
+    const { page = 1, limit = 150 } = req.query;
     const fieldNames = Object.keys(WordsFieldNames)
     try {
         // execute query with page and limit values
