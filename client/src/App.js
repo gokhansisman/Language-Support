@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BootstrapTable, TableHeaderColumn, InsertButton } from 'react-bootstrap-table';
+import { BootstrapTable,SizePerPageDropDown, TableHeaderColumn, InsertButton } from 'react-bootstrap-table';
 import Header from './components/header'
 import { Row, Col } from 'reactstrap';
 import { Button } from 'react-bootstrap';
@@ -15,6 +15,7 @@ import '../node_modules/react-bootstrap-table/dist/react-bootstrap-table-all.min
 import '../node_modules/react-bootstrap-table/dist/react-bootstrap-table';
 import '../node_modules/react-bootstrap-table/dist/react-bootstrap-table.min.js';
 import '../node_modules/react-bootstrap-table/dist/react-bootstrap-table.min.js';
+import { size } from 'lodash';
 class App extends Component {
   constructor(props) {
     super(props);
@@ -66,7 +67,7 @@ class App extends Component {
             e.target.value = e.target.value.replace(/[^A-Za-z-ğüşöçİĞÜŞÖÇĄąĆćĘęŁłŃńÓóŚśŹźŻżÑñáÁéÉíÍóÓúÚ]/gi, "");
           }}
           placeholder="Turkish"></input>
-        <Button variant="dark" size="sm" style={{ color: 'olivedrab', margin: '5px', width: '%10',marginBottom: '9px' }} onClick={this.translateWords} type="submit">Translate</Button>
+        <Button variant="dark" size="sm" style={{ color: 'olivedrab', margin: '5px', width: '%10', marginBottom: '9px' }} onClick={this.translateWords} type="submit">Translate</Button>
         <div>{this.data2}</div>
         {/* <input
           className="quotes" type="text" ref={this.english}
@@ -166,7 +167,7 @@ class App extends Component {
           deneme: true
         }, function () {
           console.log(this.state.data2);
-          
+
         })
       })
       .catch(error => console.log('parsing failder', error))
@@ -185,7 +186,7 @@ class App extends Component {
     this.setState({ deneme: true }, function () {
       console.log(this.state.deneme);
     });
-    this.fetchData();
+    //  this.fetchData();
   }
   //https://language-support.herokuapp.com/api
   fetchData() {
@@ -232,6 +233,32 @@ class App extends Component {
 
   }
 
+  sizePerPageListChange(page,sizePerPage) {
+    fetch(`http://localhost:3000/api?page=${page}&limit=${sizePerPage}`)
+      .then(response => response.json())
+      .then(json => {
+        console.log(json)
+        this.setState({
+          data: json.words,
+          deneme: true
+        }, function () {
+          console.log(this.state.data);
+        })
+      })
+      .catch(error => console.log('parsing failder', error))
+  }
+
+  onPageChange(page, sizePerPage) {
+    fetch(`http://localhost:3000/api?page=${page}&limit=${sizePerPage}`)
+    .then(response => response.json())
+    .then(json => {
+      this.setState({
+        data: json.words
+      }, function () {
+      })
+    })
+    .catch(error => console.log('parsing failder', error))
+  }
 
   render() {
     const popupboxConfig = {
@@ -244,7 +271,9 @@ class App extends Component {
     }
 
     const options = {
-      insertBtn: this.createCustomInsertButton
+      insertBtn: this.createCustomInsertButton,
+      onPageChange: this.onPageChange.bind(this),
+      onSizePerPageList: this.sizePerPageListChange.bind(this)
     };
 
     return (
