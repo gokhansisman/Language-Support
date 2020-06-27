@@ -3,7 +3,7 @@ import { BootstrapTable,SizePerPageDropDown, TableHeaderColumn, InsertButton } f
 import Header from './components/header'
 import { Row, Col } from 'reactstrap';
 import { Button } from 'react-bootstrap';
-
+import Input from './components/Input'
 import logo from './logo.svg';
 import {
   PopupboxManager,
@@ -21,7 +21,7 @@ class App extends Component {
     super(props);
     this.state = {
       data: [],
-      data2: [],
+      data2: {},
       deneme: false,
       english: "",
       turkish: "",
@@ -64,24 +64,16 @@ class App extends Component {
       <div>
         <input
           className="quotes" type="text" ref={this.t_turkish} onChange={e => {
-            e.target.value = e.target.value.replace(/[^A-Za-z-ğüşöçİĞÜŞÖÇĄąĆćĘęŁłŃńÓóŚśŹźŻżÑñáÁéÉíÍóÓúÚ]/gi, "");
+            e.target.value = e.target.value.replace(/[^A-Za-z-ğüşöçıİĞÜŞÖÇĄąĆćĘęŁłŃńÓóŚśŹźŻżÑñáÁéÉíÍóÓúÚ]/gi, "");
           }}
           placeholder="Turkish"></input>
-        <Button variant="dark" size="sm" style={{ color: 'olivedrab', margin: '5px', width: '%10', marginBottom: '9px' }} onClick={this.translateWords} type="submit">Translate</Button>
-        <div>{this.data2}</div>
-        {/* <input
-          className="quotes" type="text" ref={this.english}
-          placeholder="English">{this.state.t_english}</input>
-        <input className="quotes" type="text"
-          ref={this.turkish} placeholder="Turkish">{this.state.t_turkish}</input>
-        <input className="quotes" type="text" ref={this.polish} placeholder="Polish">{this.state.t_polish}</input>
-        <input className="quotes" type="text" ref={this.spanish} placeholder="Spanish">{this.state.t_english}</input>
-
-        <div style={{
-          position: "relative", textAlign: "center"
-        }}>
-          <Button variant="dark" size="sm" style={{ color: 'olivedrab', margin: '5px', width: '%10' }} onClick={this.postData} type="submit">Save</Button>
-        </div> */}
+        <Button variant="dark" size="sm" style={{ color: 'olivedrab', margin: '5px', width: '%10', marginBottom: '9px' }}
+           onClick={this.translateWords} type="submit">Translate</Button>
+           <div>
+          <input type="text" placeholder="English" value={this.state.data2.en}></input>
+          <input type="text" placeholder="Polish" value={this.state.data2.pl}></input>
+          <input type="text" placeholder="Spanish" value={this.state.data2.es}></input>
+          </div>
       </div >
     )
     PopupboxManager.open({ content })
@@ -92,7 +84,7 @@ class App extends Component {
       <div>
         <input
           className="quotes" type="text" ref={this.english} onChange={e => {
-            e.target.value = e.target.value.replace(/[^A-Za-z-ğüşöçİĞÜŞÖÇĄąĆćĘęŁłŃńÓóŚśŹźŻżÑñáÁéÉíÍóÓúÚ]/gi, "");
+            e.target.value = e.target.value.replace(/[^A-Za-z-ğüşöçıİĞÜŞÖÇĄąĆćĘęŁłŃńÓóŚśŹźŻżÑñáÁéÉíÍóÓúÚ]/gi, "");
             this.saveWords()
           }
           }
@@ -100,19 +92,19 @@ class App extends Component {
         <input className="quotes" type="text"
           ref={this.turkish} onChange={
             e => {
-              e.target.value = e.target.value.replace(/[^A-Za-z-ğüşöçİĞÜŞÖÇĄąĆćĘęŁłŃńÓóŚśŹźŻżÑñáÁéÉíÍóÓúÚ]/gi, "");
+              e.target.value = e.target.value.replace(/[^A-Za-z-ğüşöçıİĞÜŞÖÇĄąĆćĘęŁłŃńÓóŚśŹźŻżÑñáÁéÉíÍóÓúÚ]/gi, "");
               this.saveWords()
             }
           } placeholder="Turkish"></input>
         <input className="quotes" type="text" ref={this.polish} onChange={
           e => {
-            e.target.value = e.target.value.replace(/[^A-Za-z-ğüşöçİĞÜŞÖÇĄąĆćĘęŁłŃńÓóŚśŹźŻżÑñáÁéÉíÍóÓúÚ]/gi, "");
+            e.target.value = e.target.value.replace(/[^A-Za-z-ğüşöçıİĞÜŞÖÇĄąĆćĘęŁłŃńÓóŚśŹźŻżÑñáÁéÉíÍóÓúÚ]/gi, "");
             this.saveWords()
           }
         } placeholder="Polish"></input>
         <input className="quotes" type="text" ref={this.spanish} onChange={
           e => {
-            e.target.value = e.target.value.replace(/[^A-Za-z-ğüşöçİĞÜŞÖÇĄąĆćĘęŁłŃńÓóŚśŹźŻżÑñáÁéÉíÍóÓúÚ]/gi, "");
+            e.target.value = e.target.value.replace(/[^A-Za-z-ğüşöçıİĞÜŞÖÇĄąĆćĘęŁłŃńÓóŚśŹźŻżÑñáÁéÉíÍóÓúÚ]/gi, "");
             this.saveWords()
           }
         } placeholder="Spanish"></input>
@@ -140,38 +132,28 @@ class App extends Component {
     this.setState({
       t_turkish: this.t_turkish.current.value.toLowerCase()
     })
-    fetch('http://localhost:3000/api/translate', {
+    fetch('https://language-support.herokuapp.com/api/translate', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        t_turkish: this.state.t_turkish
+        t_turkish: this.t_turkish.current.value.toLowerCase()
       })
-    }).then(res => res.json())
+    }).then(res =>res.json())
+    .then(json=> {
+      console.log(json.pl)
+      this.setState({
+          data2:json
+          })
+    this.translate()
+    console.log(this.state.data2)
+        })
       .catch(err => {
         console.log(err)
-        this.setState({
-          error: true
-        })
       })
-    if (this.state.error === true) {
-      alert("Word could not add!")
     }
-    fetch('https://language-support.herokuapp.com/api/translate')
-      .then(response => response.json())
-      .then(json => {
-        this.setState({
-          data2: json,
-          deneme: true
-        }, function () {
-          console.log(this.state.data2);
-
-        })
-      })
-      .catch(error => console.log('parsing failder', error))
-  }
   createCustomInsertButton = (onClick) => {
     return (
       <div>
@@ -234,7 +216,7 @@ class App extends Component {
   }
 
   sizePerPageListChange(page,sizePerPage) {
-    fetch(`http://localhost:3000/api?page=${page}&limit=${sizePerPage}`)
+    fetch(`https://language-support.herokuapp.com/api?page=${page}&limit=${sizePerPage}`)
       .then(response => response.json())
       .then(json => {
         console.log(json)
@@ -249,7 +231,7 @@ class App extends Component {
   }
 
   onPageChange(page, sizePerPage) {
-    fetch(`http://localhost:3000/api?page=${page}&limit=${sizePerPage}`)
+    fetch(`https://language-support.herokuapp.com/api?page=${page}&limit=${sizePerPage}`)
     .then(response => response.json())
     .then(json => {
       this.setState({
