@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { BootstrapTable,SizePerPageDropDown, TableHeaderColumn, InsertButton } from 'react-bootstrap-table';
+import { BootstrapTable, SizePerPageDropDown, TableHeaderColumn, InsertButton } from 'react-bootstrap-table';
 import Header from './components/header'
 import { Row, Col } from 'reactstrap';
 import { Button } from 'react-bootstrap';
+import Pagination from 'react-bootstrap/Pagination'
 import Input from './components/Input'
 import logo from './logo.svg';
 import {
@@ -22,6 +23,8 @@ class App extends Component {
     this.state = {
       data: [],
       data2: {},
+      currentPage: 1,
+      totalPages: null,
       deneme: false,
       english: "",
       turkish: "",
@@ -40,6 +43,7 @@ class App extends Component {
     this.translate = this.translate.bind(this);
     this.translateWords = this.translateWords.bind(this);
     this.postData = this.postData.bind(this);
+    this.fetchPages = this.fetchPages.bind(this);
     this.validateInput = this.validateInput.bind(this);
     this.english = React.createRef();
     this.turkish = React.createRef();
@@ -68,12 +72,12 @@ class App extends Component {
           }}
           placeholder="Turkish"></input>
         <Button variant="dark" size="sm" style={{ color: 'olivedrab', margin: '5px', width: '%10', marginBottom: '9px' }}
-           onClick={this.translateWords} type="submit">Translate</Button>
-           <div>
+          onClick={this.translateWords} type="submit">Translate</Button>
+        <div>
           <input type="text" placeholder="English" value={this.state.data2.en}></input>
           <input type="text" placeholder="Polish" value={this.state.data2.pl}></input>
           <input type="text" placeholder="Spanish" value={this.state.data2.es}></input>
-          </div>
+        </div>
       </div >
     )
     PopupboxManager.open({ content })
@@ -141,19 +145,19 @@ class App extends Component {
       body: JSON.stringify({
         t_turkish: this.t_turkish.current.value.toLowerCase()
       })
-    }).then(res =>res.json())
-    .then(json=> {
-      console.log(json.pl)
-      this.setState({
-          data2:json
-          })
-    this.translate()
-    console.log(this.state.data2)
+    }).then(res => res.json())
+      .then(json => {
+        console.log(json.pl)
+        this.setState({
+          data2: json
         })
+        this.translate()
+        console.log(this.state.data2)
+      })
       .catch(err => {
         console.log(err)
       })
-    }
+  }
   createCustomInsertButton = (onClick) => {
     return (
       <div>
@@ -175,13 +179,16 @@ class App extends Component {
     fetch('https://language-support.herokuapp.com/api')
       .then(response => response.json())
       .then(json => {
-        console.log(json)
+        // let obj = this.state.data;
+        // Object.assign(obj, { 1: json.words, 2: json.words.slice(20, 40), 3: json.words.slice(40, 60) })
         this.setState({
           data: json.words,
+          totalPages: json.totalPages,
           deneme: true
         }, function () {
           console.log(this.state.data);
         })
+
       })
       .catch(error => console.log('parsing failder', error))
 
@@ -214,32 +221,20 @@ class App extends Component {
     PopupboxManager.close()
 
   }
-
-  sizePerPageListChange(page,sizePerPage) {
-    fetch(`https://language-support.herokuapp.com/api?page=${page}&limit=${sizePerPage}`)
+  fetchPages(number) {
+    fetch(`https://language-support.herokuapp.com/api?page=${number}&limit=20`)
       .then(response => response.json())
       .then(json => {
-        console.log(json)
         this.setState({
           data: json.words,
           deneme: true
         }, function () {
           console.log(this.state.data);
         })
+
       })
       .catch(error => console.log('parsing failder', error))
-  }
 
-  onPageChange(page, sizePerPage) {
-    fetch(`https://language-support.herokuapp.com/api?page=${page}&limit=${sizePerPage}`)
-    .then(response => response.json())
-    .then(json => {
-      this.setState({
-        data: json.words
-      }, function () {
-      })
-    })
-    .catch(error => console.log('parsing failder', error))
   }
 
   render() {
@@ -254,9 +249,42 @@ class App extends Component {
 
     const options = {
       insertBtn: this.createCustomInsertButton,
-      onPageChange: this.onPageChange.bind(this),
-      onSizePerPageList: this.sizePerPageListChange.bind(this)
+      // sizePerPageDropDown: this.renderSizePerPageDropDown.bind(this),
+      page: 1,  // which page you want to show as default
+      sizePerPageList: [
+        {
+          text: '10', value: 10
+        }, {
+          text: 'All', value: 50
+        }], // you can change the dropdown list for size per page
+      sizePerPage: 20,  // which size per page you want to locate as default
+      pageStartIndex: 0, // where to start counting the pages
+      paginationSize: 0,  // the pagination bar size.
+      //paginationShowsTotal: this.renderShowsTotal.bind(this),  // Accept bool or function
+
+      hideSizePerPage: true // > You can hide the dropdown for sizePerPage
+      //alwaysShowAllBtns: false // Always show next and previous button
+      // withFirstAndLast: false > Hide the going to First and Last page button
+      //  onSizePerPageList: this.sizePerPageListChange.bind(this)
     };
+    let active = 2;
+    let items = [];
+    for (let number = 1; number <= this.state.totalPages; number++) {
+      items.push(
+        <Pagination.Item key={number} active={number === active}>
+          {number}
+        </Pagination.Item>,
+      );
+    }
+    const paginationBasic = items.map(number => {
+      return (
+        <Pagination
+          key={number}
+          onClick={() => this.fetchPages(number.key)}>
+          {number}
+        </Pagination>
+      );
+    });
 
     return (
 
@@ -266,7 +294,6 @@ class App extends Component {
         <PopupboxContainer{...popupboxConfig}></PopupboxContainer>
         <BootstrapTable search insertRow exportCSV data={this.state.data} scrollTop={'Bottom'}
           options={options}
-          pagination
           tableStyle={{ border: '#0000FF 2.5px solid' }}
           containerStyle={{ border: '#FFBB73 2.5px solid' }}
           headerStyle={{ border: 'red 1px solid' }}
@@ -279,6 +306,7 @@ class App extends Component {
           <TableHeaderColumn width='150' dataField='spanish'>SPANISH </TableHeaderColumn>
           {/* <TableHeaderColumn width='150' dataField='sentences'>SENTENCES</TableHeaderColumn> */}
         </BootstrapTable>
+        <div style={{display: "inline-flex"}}>{paginationBasic}</div>
       </div>
     );
   }
