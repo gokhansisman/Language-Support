@@ -3,7 +3,9 @@ import { BootstrapTable, SizePerPageDropDown, TableHeaderColumn, InsertButton } 
 import Header from './components/header'
 import { Row, Col } from 'reactstrap';
 import { Button } from 'react-bootstrap';
-import Pagination from 'react-bootstrap/Pagination'
+//import Pagination from 'react-bootstrap/Pagination'
+import Typography from '@material-ui/core/Typography';
+import Pagination from '@material-ui/lab/Pagination';
 import Input from './components/Input'
 import logo from './logo.svg';
 import {
@@ -25,6 +27,7 @@ class App extends Component {
       data2: {},
       currentPage: 1,
       totalPages: null,
+      page:null,
       deneme: false,
       english: "",
       turkish: "",
@@ -44,6 +47,7 @@ class App extends Component {
     this.translateWords = this.translateWords.bind(this);
     this.postData = this.postData.bind(this);
     this.fetchPages = this.fetchPages.bind(this);
+    this.handleChange = this.handleChange.bind(this)
     this.validateInput = this.validateInput.bind(this);
     this.english = React.createRef();
     this.turkish = React.createRef();
@@ -236,7 +240,12 @@ class App extends Component {
       .catch(error => console.log('parsing failder', error))
 
   }
-
+  handleChange = (event, value) => {
+    this.setState({
+      page: value
+    })
+    this.fetchPages(value)
+  };
   render() {
     const popupboxConfig = {
       titleBar: {
@@ -263,28 +272,8 @@ class App extends Component {
       //paginationShowsTotal: this.renderShowsTotal.bind(this),  // Accept bool or function
 
       hideSizePerPage: true // > You can hide the dropdown for sizePerPage
-      //alwaysShowAllBtns: false // Always show next and previous button
-      // withFirstAndLast: false > Hide the going to First and Last page button
-      //  onSizePerPageList: this.sizePerPageListChange.bind(this)
+
     };
-    let active = 2;
-    let items = [];
-    for (let number = 1; number <= this.state.totalPages; number++) {
-      items.push(
-        <Pagination.Item key={number} active={number === active}>
-          {number}
-        </Pagination.Item>,
-      );
-    }
-    const paginationBasic = items.map(number => {
-      return (
-        <Pagination
-          key={number}
-          onClick={() => this.fetchPages(number.key)}>
-          {number}
-        </Pagination>
-      );
-    });
 
     return (
 
@@ -306,7 +295,9 @@ class App extends Component {
           <TableHeaderColumn width='150' dataField='spanish'>SPANISH </TableHeaderColumn>
           {/* <TableHeaderColumn width='150' dataField='sentences'>SENTENCES</TableHeaderColumn> */}
         </BootstrapTable>
-        <div style={{display: "inline-flex"}}>{paginationBasic}</div>
+        <div>
+        <Pagination count={this.state.totalPages} page={this.state.page} onChange={this.handleChange} />
+      </div>
       </div>
     );
   }
