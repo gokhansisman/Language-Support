@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BootstrapTable, SizePerPageDropDown, TableHeaderColumn, InsertButton } from 'react-bootstrap-table';
+import { BootstrapTable, SizePerPageDropDown, TableHeaderColumn, InsertButton,SearchField  } from 'react-bootstrap-table';
 import Header from './components/header'
 import { Row, Col } from 'reactstrap';
 import { Button } from 'react-bootstrap';
@@ -27,6 +27,7 @@ class App extends Component {
       data2: {},
       currentPage: 1,
       totalPages: null,
+      gokhan:null,
       page:null,
       deneme: false,
       english: "",
@@ -47,7 +48,8 @@ class App extends Component {
     this.translateWords = this.translateWords.bind(this);
     this.postData = this.postData.bind(this);
     this.fetchPages = this.fetchPages.bind(this);
-    this.handleChange = this.handleChange.bind(this)
+    this.handleChange = this.handleChange.bind(this);
+    this.searchChange= this.searchChange.bind(this);
     this.validateInput = this.validateInput.bind(this);
     this.english = React.createRef();
     this.turkish = React.createRef();
@@ -180,7 +182,7 @@ class App extends Component {
   }
   //https://language-support.herokuapp.com/api
   fetchData() {
-    fetch('https://language-support.herokuapp.com/api')
+    fetch('/api')
       .then(response => response.json())
       .then(json => {
         // let obj = this.state.data;
@@ -199,7 +201,7 @@ class App extends Component {
   }
   //https://language-support.herokuapp.com/api/ekle
   postData() {
-    fetch('https://language-support.herokuapp.com/api/ekle', {
+    fetch('/api/ekle', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -223,10 +225,20 @@ class App extends Component {
       alert("Word could not add!")
     }
     PopupboxManager.close()
+  }
 
+    searchChange(event) {
+      console.log(event.target.value);
+      //Reuest - > mongo find ... Db 
+    }
+
+  createCustomSearchField = (props) => {
+    return (
+      <input onChange ={this.searchChange}/>
+    );
   }
   fetchPages(number) {
-    fetch(`https://language-support.herokuapp.com/api?page=${number}&limit=20`)
+    fetch(`/api?page=${number}&limit=20`)
       .then(response => response.json())
       .then(json => {
         this.setState({
@@ -238,7 +250,6 @@ class App extends Component {
 
       })
       .catch(error => console.log('parsing failder', error))
-
   }
   handleChange = (event, value) => {
     this.setState({
@@ -258,6 +269,7 @@ class App extends Component {
 
     const options = {
       insertBtn: this.createCustomInsertButton,
+      searchField: this.createCustomSearchField,
       // sizePerPageDropDown: this.renderSizePerPageDropDown.bind(this),
       page: 1,  // which page you want to show as default
       sizePerPageList: [
@@ -288,7 +300,7 @@ class App extends Component {
           headerStyle={{ border: 'red 1px solid' }}
           bodyStyle={{ border: 'green 1px solid' }}
         >
-
+          
           <TableHeaderColumn width='150' dataField='english' isKey>ENGLISH</TableHeaderColumn>
           <TableHeaderColumn width='150' dataField='turkish'>TURKISH</TableHeaderColumn>
           <TableHeaderColumn width='150' dataField='polish'>POLISH </TableHeaderColumn>

@@ -60,9 +60,10 @@ app.get('/', (req, res) => {
 }) */
 app.get('/api', async (req, res) => {
     // destructure page and limit and set default values
-    const {
+    let {
         page = 1, limit = 30
     } = req.query;
+    limit = 20
     const fieldNames = Object.keys(WordsFieldNames)
     try {
         // execute query with page and limit values
@@ -84,6 +85,47 @@ app.get('/api', async (req, res) => {
         console.error(err.message);
     }
 });
+
+app.get('/api/words/:id', async (req, res) => {
+    Words.findById(req.params.id).then((word) => {
+
+        if (word) {
+            // Words..
+            res.json(word)
+        } else {
+            res.sendStatus(404);
+        }
+
+    }).catch(err => {
+        if (err) {
+            throw err;
+        }
+    })
+});
+app.delete('/api/words/:_id', (req, res) => {
+    Words.findByIdAndDelete(req.params._id).then((word) => {
+        console.log(word)
+        res.send("Word deleted!")
+    }).catch(err=>{
+        if(err){
+            throw err;
+        }
+    })
+})
+ app.get('/api/words/:lang/:word', function(req, res){
+     //example request :http://localhost:3000/api/words/english/equal
+    let word = req.params.word;
+    let lang = req.params.lang; 
+    Words.findOne({[lang] : word}).then((words)=>{      
+      console.log(words)
+      res.send({words})
+    }).catch(err=>{
+        if(err){
+            throw err;
+        }
+  }) 
+}) 
+
 
 
 // app.post('/api/translate', async (req, res) => {
@@ -202,20 +244,20 @@ app.post('/api/ekle', async (req, res) => {
         let obj = null
         try {
             obj = await Words.findOne({
-                turkish:req.body.turkish,
-                english:req.body.english,
-                polish:req.body.polish,
-                spanish:req.body.spanish
+                turkish: req.body.turkish,
+                english: req.body.english,
+                polish: req.body.polish,
+                spanish: req.body.spanish
             })
             console.log(obj)
-            if(obj!=null){
+            if (obj != null) {
                 throw new Error("Duplicate Row!")
             }
             console.log(obj)
-        } catch(err) {
+        } catch (err) {
             return res.json({
                 "the": "end",
-                details:err.message
+                details: err.message
             })
         }
         const nwords = new Words({
