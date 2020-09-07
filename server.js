@@ -67,7 +67,7 @@ app.get('/api', async (req, res) => {
     const fieldNames = Object.keys(WordsFieldNames)
     try {
         // execute query with page and limit values
-        const words = await Words.find()
+        const words = await Words.find({}).sort("english")
             .limit(limit * 1)
             .skip((page - 1) * limit)
             .exec();
@@ -106,25 +106,25 @@ app.delete('/api/words/:_id', (req, res) => {
     Words.findByIdAndDelete(req.params._id).then((word) => {
         console.log(word)
         res.send("Word deleted!")
-    }).catch(err=>{
-        if(err){
+    }).catch(err => {
+        if (err) {
             throw err;
         }
     })
 })
- app.get('/api/words/:lang/:word', function(req, res){
-     //example request :http://localhost:3000/api/words/english/equal
+app.get('/api/words/:lang/:word', function (req, res) {
+    //example request :http://localhost:3000/api/words/english/equal
     let word = req.params.word;
-    let lang = req.params.lang; 
-    Words.findOne({[lang] : word}).then((words)=>{      
-      console.log(words)
-      res.send({words})
-    }).catch(err=>{
-        if(err){
+    let lang = req.params.lang;
+    Words.findOne({ [lang]: word }).then((words) => {
+        console.log(words)
+        res.send({ words })
+    }).catch(err => {
+        if (err) {
             throw err;
         }
-  }) 
-}) 
+    })
+})
 
 
 
@@ -244,10 +244,10 @@ app.post('/api/ekle', async (req, res) => {
         let obj = null
         try {
             obj = await Words.findOne({
-                turkish: req.body.turkish,
-                english: req.body.english,
-                polish: req.body.polish,
-                spanish: req.body.spanish
+                turkish: req.body.turkish.toString().toLowerCase(),
+                english: req.body.english.toString().toLowerCase(),
+                polish: req.body.polish.toString().toLowerCase(),
+                spanish: req.body.spanish.toString().toLowerCase()
             })
             console.log(obj)
             if (obj != null) {
@@ -260,11 +260,11 @@ app.post('/api/ekle', async (req, res) => {
                 details: err.message
             })
         }
-        const nwords = new Words({
-            turkish: req.body.turkish,
-            english: req.body.english,
-            polish: req.body.polish,
-            spanish: req.body.spanish,
+         const nwords = new Words({
+            turkish: req.body.turkish.toString().toLowerCase(),
+            english: req.body.english.toString().toLowerCase(),
+            polish: req.body.polish.toString().toLowerCase(),
+            spanish: req.body.spanish.toString().toLowerCase(),
             sentences: req.body.sentences
         })
         nwords.save((err) => {
@@ -277,7 +277,7 @@ app.post('/api/ekle', async (req, res) => {
                 result: "Added"
             })
             console.log('Added')
-        })
+        }) 
     } else {
         return res.status(500).send('Something broke!')
     }

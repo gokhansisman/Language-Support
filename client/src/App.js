@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { BootstrapTable, SizePerPageDropDown, TableHeaderColumn, InsertButton,SearchField  } from 'react-bootstrap-table';
+import { BootstrapTable, SizePerPageDropDown, TableHeaderColumn, InsertButton, SearchField } from 'react-bootstrap-table';
 import Header from './components/header'
-import { Row, Col } from 'reactstrap';
+import { Row, Col, Alert } from 'reactstrap';
 import { Button } from 'react-bootstrap';
 //import Pagination from 'react-bootstrap/Pagination'
 import Typography from '@material-ui/core/Typography';
@@ -27,8 +27,7 @@ class App extends Component {
       data2: {},
       currentPage: 1,
       totalPages: null,
-      gokhan:null,
-      page:null,
+      page: null,
       deneme: false,
       english: "",
       turkish: "",
@@ -39,7 +38,9 @@ class App extends Component {
       t_turkish: "",
       t_polish: "",
       t_spanish: "",
-      error: false
+      error: false,
+      errorMessage: "",
+      succeed: false
       // redirect: false
     };
     this.saveWords = this.saveWords.bind(this);
@@ -49,7 +50,7 @@ class App extends Component {
     this.postData = this.postData.bind(this);
     this.fetchPages = this.fetchPages.bind(this);
     this.handleChange = this.handleChange.bind(this);
-    this.searchChange= this.searchChange.bind(this);
+    this.searchChange = this.searchChange.bind(this);
     this.validateInput = this.validateInput.bind(this);
     this.english = React.createRef();
     this.turkish = React.createRef();
@@ -215,26 +216,38 @@ class App extends Component {
         sentences: this.state.sentences
       })
     }).then(res => res.json())
+      .then(json => {
+        if (json.details != null) {
+          this.setState({
+            error: true,
+            errorMessage: json.details
+          }, function () { console.log(json.details) })
+        }
+        else {
+          this.setState({
+            succeed: true
+          })
+        }
+      },
+      )
       .catch(err => {
         console.log(err)
         this.setState({
-          error: true
+          error: true,
+          errorMessage: "Invalid inputs! Please check your words!"
         })
       })
-    if (this.state.error === true) {
-      alert("Word could not add!")
-    }
     PopupboxManager.close()
   }
 
-    searchChange(event) {
-      console.log(event.target.value);
-      //Reuest - > mongo find ... Db 
-    }
+  searchChange(event) {
+    console.log(event.target.value);
+    //Reuest - > mongo find ... Db 
+  }
 
   createCustomSearchField = (props) => {
     return (
-      <input onChange ={this.searchChange}/>
+      <input onChange={this.searchChange} />
     );
   }
   fetchPages(number) {
@@ -269,7 +282,7 @@ class App extends Component {
 
     const options = {
       insertBtn: this.createCustomInsertButton,
-      searchField: this.createCustomSearchField,
+      //searchField: this.createCustomSearchField,
       // sizePerPageDropDown: this.renderSizePerPageDropDown.bind(this),
       page: 1,  // which page you want to show as default
       sizePerPageList: [
@@ -290,9 +303,16 @@ class App extends Component {
     return (
 
       <div style={{ width: 'auto' }}>
+        <Alert color="danger" isOpen={this.state.error} toggle={() => this.setState({ error: !this.state.error })}>
+          <h1>{this.state.errorMessage}</h1>
+        </Alert>
+        <Alert color="success" isOpen={this.state.succeed} toggle={() => this.setState({ succeed: !this.state.succeed })}>
+          <h1>Word added !</h1>
+        </Alert>
         <Header />
 
         <PopupboxContainer{...popupboxConfig}></PopupboxContainer>
+
         <BootstrapTable search insertRow exportCSV data={this.state.data} scrollTop={'Bottom'}
           options={options}
           tableStyle={{ border: '#0000FF 2.5px solid' }}
@@ -300,7 +320,7 @@ class App extends Component {
           headerStyle={{ border: 'red 1px solid' }}
           bodyStyle={{ border: 'green 1px solid' }}
         >
-          
+
           <TableHeaderColumn width='150' dataField='english' isKey>ENGLISH</TableHeaderColumn>
           <TableHeaderColumn width='150' dataField='turkish'>TURKISH</TableHeaderColumn>
           <TableHeaderColumn width='150' dataField='polish'>POLISH </TableHeaderColumn>
@@ -308,8 +328,8 @@ class App extends Component {
           {/* <TableHeaderColumn width='150' dataField='sentences'>SENTENCES</TableHeaderColumn> */}
         </BootstrapTable>
         <div>
-        <Pagination count={this.state.totalPages} page={this.state.page} onChange={this.handleChange} />
-      </div>
+          <Pagination count={this.state.totalPages} page={this.state.page} onChange={this.handleChange} />
+        </div>
       </div>
     );
   }
