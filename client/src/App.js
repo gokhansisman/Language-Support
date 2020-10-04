@@ -1,13 +1,9 @@
 import React, { Component } from 'react';
-import { BootstrapTable, SizePerPageDropDown, TableHeaderColumn, InsertButton, SearchField } from 'react-bootstrap-table';
+import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import Header from './components/header'
-import { Row, Col, Alert } from 'reactstrap';
+import { Alert } from 'reactstrap';
 import { Button } from 'react-bootstrap';
-//import Pagination from 'react-bootstrap/Pagination'
-import Typography from '@material-ui/core/Typography';
 import Pagination from '@material-ui/lab/Pagination';
-import Input from './components/Input'
-import logo from './logo.svg';
 import {
   PopupboxManager,
   PopupboxContainer
@@ -18,13 +14,12 @@ import '../node_modules/react-bootstrap-table/dist/react-bootstrap-table-all.min
 import '../node_modules/react-bootstrap-table/dist/react-bootstrap-table';
 import '../node_modules/react-bootstrap-table/dist/react-bootstrap-table.min.js';
 import '../node_modules/react-bootstrap-table/dist/react-bootstrap-table.min.js';
-import { size } from 'lodash';
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
       data: [],
-      data2: {},
+      translatedWords: {},
       currentPage: 1,
       totalPages: null,
       page: null,
@@ -41,7 +36,6 @@ class App extends Component {
       error: false,
       errorMessage: "",
       succeed: false
-      // redirect: false
     };
     this.saveWords = this.saveWords.bind(this);
     this.update = this.update.bind(this);
@@ -60,8 +54,6 @@ class App extends Component {
     this.t_turkish = React.createRef();
     this.t_polish = React.createRef();
     this.t_spanish = React.createRef();
-
-
   };
   validateInput(word) {
     if (word.match(/\d/) != null) {
@@ -81,9 +73,9 @@ class App extends Component {
         <Button variant="dark" size="sm" style={{ color: 'olivedrab', margin: '5px', width: '%10', marginBottom: '9px' }}
           onClick={this.translateWords} type="submit">Translate</Button>
         <div>
-          <input type="text" placeholder="English" value={this.state.data2.en}></input>
-          <input type="text" placeholder="Polish" value={this.state.data2.pl}></input>
-          <input type="text" placeholder="Spanish" value={this.state.data2.es}></input>
+          <input type="text" placeholder="English" value={this.state.translatedWords.en}></input>
+          <input type="text" placeholder="Polish" value={this.state.translatedWords.pl}></input>
+          <input type="text" placeholder="Spanish" value={this.state.translatedWords.es}></input>
         </div>
       </div >
     )
@@ -130,7 +122,6 @@ class App extends Component {
     PopupboxManager.open({ content })
   }
   saveWords(event) {
-
     this.setState({
       english: this.english.current.value.toLowerCase(),
       turkish: this.turkish.current.value.toLowerCase(),
@@ -154,12 +145,10 @@ class App extends Component {
       })
     }).then(res => res.json())
       .then(json => {
-        console.log(json.pl)
         this.setState({
-          data2: json
+          translatedWords: json
         })
         this.translate()
-        console.log(this.state.data2)
       })
       .catch(err => {
         console.log(err)
@@ -171,7 +160,6 @@ class App extends Component {
         <Button variant="outline-success" onClick={this.update}>Add Word</Button>
         <Button variant="outline-success" onClick={this.translate}>Use Google-Translate</Button>
       </div>
-      //<button style={{ color: 'red' }} onClick={this.update}>Add rows</button>
     );
   }
   componentDidMount() {
@@ -179,15 +167,11 @@ class App extends Component {
     this.setState({ deneme: true }, function () {
       console.log(this.state.deneme);
     });
-    //  this.fetchData();
   }
-  //https://language-support.herokuapp.com/api
   fetchData() {
     fetch('/api')
       .then(response => response.json())
       .then(json => {
-        // let obj = this.state.data;
-        // Object.assign(obj, { 1: json.words, 2: json.words.slice(20, 40), 3: json.words.slice(40, 60) })
         this.setState({
           data: json.words,
           totalPages: json.totalPages,
@@ -200,7 +184,6 @@ class App extends Component {
       .catch(error => console.log('parsing failder', error))
 
   }
-  //https://language-support.herokuapp.com/api/ekle
   postData() {
     fetch('/api/ekle', {
       method: 'POST',
@@ -282,26 +265,20 @@ class App extends Component {
 
     const options = {
       insertBtn: this.createCustomInsertButton,
-      //searchField: this.createCustomSearchField,
-      // sizePerPageDropDown: this.renderSizePerPageDropDown.bind(this),
-      page: 1,  // which page you want to show as default
+      page: 1,
       sizePerPageList: [
         {
           text: '10', value: 10
         }, {
           text: 'All', value: 50
-        }], // you can change the dropdown list for size per page
-      sizePerPage: 20,  // which size per page you want to locate as default
-      pageStartIndex: 0, // where to start counting the pages
-      paginationSize: 0,  // the pagination bar size.
-      //paginationShowsTotal: this.renderShowsTotal.bind(this),  // Accept bool or function
-
-      hideSizePerPage: true // > You can hide the dropdown for sizePerPage
-
+        }],
+      sizePerPage: 20,
+      pageStartIndex: 0,
+      paginationSize: 0,
+      hideSizePerPage: true
     };
 
     return (
-
       <div style={{ width: 'auto' }}>
         <Alert color="danger" isOpen={this.state.error} toggle={() => this.setState({ error: !this.state.error })}>
           <h1>{this.state.errorMessage}</h1>
@@ -310,9 +287,7 @@ class App extends Component {
           <h1>Word added !</h1>
         </Alert>
         <Header />
-
         <PopupboxContainer{...popupboxConfig}></PopupboxContainer>
-
         <BootstrapTable search insertRow exportCSV data={this.state.data} scrollTop={'Bottom'}
           options={options}
           tableStyle={{ border: '#0000FF 2.5px solid' }}
@@ -320,12 +295,10 @@ class App extends Component {
           headerStyle={{ border: 'red 1px solid' }}
           bodyStyle={{ border: 'green 1px solid' }}
         >
-
-          <TableHeaderColumn width='150' dataField='english' isKey>ENGLISH</TableHeaderColumn>
-          <TableHeaderColumn width='150' dataField='turkish'>TURKISH</TableHeaderColumn>
-          <TableHeaderColumn width='150' dataField='polish'>POLISH </TableHeaderColumn>
-          <TableHeaderColumn width='150' dataField='spanish'>SPANISH </TableHeaderColumn>
-          {/* <TableHeaderColumn width='150' dataField='sentences'>SENTENCES</TableHeaderColumn> */}
+          <TableHeaderColumn width='150' dataSort={true} dataField='english' isKey>ENGLISH</TableHeaderColumn>
+          <TableHeaderColumn width='150' dataSort={true} dataField='turkish'>TURKISH</TableHeaderColumn>
+          <TableHeaderColumn width='150' dataSort={true} dataField='polish'>POLISH </TableHeaderColumn>
+          <TableHeaderColumn width='150' dataSort={true} dataField='spanish'>SPANISH </TableHeaderColumn>
         </BootstrapTable>
         <div>
           <Pagination count={this.state.totalPages} page={this.state.page} onChange={this.handleChange} />
@@ -334,7 +307,5 @@ class App extends Component {
     );
   }
 }
-
-
 
 export default App;

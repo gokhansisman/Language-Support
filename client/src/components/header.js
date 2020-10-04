@@ -1,10 +1,9 @@
 import React from 'react';
-import { Navbar, Nav, NavDropdown, Form, FormControl, Button, Input, Row, Container, Col } from 'react-bootstrap'
+import { Navbar, Nav, NavDropdown} from 'react-bootstrap'
 import ls from '../images/ls.png'
 class Header extends React.Component {
    render() {
       return (
-
          <Navbar bg="light" expand="lg">
             <Navbar.Brand href="#home">Language Support</Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
