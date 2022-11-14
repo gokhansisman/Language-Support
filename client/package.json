@@ -17,7 +17,7 @@
     "react-native-ratings": "^6.5.0",
     "react-native-vector-icons": "^6.6.0",
     "react-popupbox": "^2.0.8",
-    "react-scripts": "^3.4.1",
+    "react-scripts": "^5.0.1",
     "reactstrap": "^7.1.0"
   },
   "proxy": "http://localhost:3000",
