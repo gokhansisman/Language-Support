@@ -13,10 +13,10 @@
   "license": "ISC",
   "dependencies": {
     "@vitalets/google-translate-api": "^3.0.0",
-    "body-parser": "^1.18.3",
+    "body-parser": "^1.20.1",
     "dotenv": "^8.2.0",
     "ejs": "^2.6.1",
-    "express": "^4.16.4",
+    "express": "^4.18.2",
     "lodash": "^4.17.15",
     "mongodb": "^3.1.13",
     "mongoose": "^5.7.5",
